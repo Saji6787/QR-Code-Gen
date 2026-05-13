@@ -3,25 +3,53 @@
   <head>
     <title>QRCode generator</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+    
+    <!-- CSS External -->
+    <link rel="stylesheet" href="css/style.css" />
+    
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="qrcode.js"></script>
   </head>
   <body>
-		<h1>QR Code Generator</h1>
-    <input
-      id="text"
-      type="text"
-      value="https://uns.ac.id/id/"
-      style="width: 80%"
-    /><br />
-    <div
-      id="qrcode"
-      style="width: 100px; height: 100px; margin-top: 15px"
-    ></div>
+    
+    <div class="background">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+    </div>
+
+    <div class="app-wrapper">
+      
+      <div class="step step-1 active" id="step1">
+        <h1>QR Code Generator</h1>
+        <input
+          id="text"
+          type="text"
+          value="https://uns.ac.id/id/"
+          style="width: 80%"
+        /><br />
+
+        <button type="button" class="btn-generate" id="btnGenerate">Generate QR</button>
+      </div>
+
+      <div class="step step-2" id="step2">
+        <h1>QR Code Siap digunakan!</h1>
+        
+        <div class="qr-display">
+          <div id="qrcode"></div>
+        </div>
+        
+        <div class="actions">
+          <button type="button" class="btn-secondary" id="btnBack">Buat Lagi</button>
+          <a href="#" class="btn-primary" id="btnDownload" download="qrcode.png">Unduh PNG</a>
+        </div>
+      </div>
+
+      <footer class="footer">
+        &copy; 2026 QR Generator App
+      </footer>
+    </div>
 
     <script type="text/javascript">
       var qrcode = new QRCode(document.getElementById("qrcode"), {
@@ -52,6 +80,44 @@
             makeCode();
           }
         });
+    </script>
+    
+    <script type="text/javascript">
+      (function() {
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const btnGenerate = document.getElementById('btnGenerate');
+        const btnBack = document.getElementById('btnBack');
+        const btnDownload = document.getElementById('btnDownload');
+        const qrContainer = document.getElementById('qrcode');
+
+        btnGenerate.addEventListener('click', function() {
+          makeCode();
+          
+          setTimeout(function() {
+            const canvas = qrContainer.querySelector('canvas');
+            if (canvas) {
+              btnDownload.href = canvas.toDataURL('image/png');
+            }
+            
+            step1.classList.remove('active');
+            step2.classList.add('active');
+          }, 100);
+        });
+
+        btnBack.addEventListener('click', function() {
+          step2.classList.remove('active');
+          step1.classList.add('active');
+          document.getElementById('text').focus();
+        });
+
+        document.getElementById('text').addEventListener('keydown', function(e) {
+          if (e.keyCode === 13) {
+            e.preventDefault();
+            btnGenerate.click();
+          }
+        });
+      })();
     </script>
   </body>
 </html>
